@@ -38,14 +38,14 @@ class ClientApp(object):
     def __init__(self, master):
         self.root = master
         self.root.resizable(False, False)
-        self.root.title("Klient")
+        self.root.title("Client")
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.content = ttk.Frame(self.root)
-        self.label = Label(self.content, text="Wpisz IP serwera")
+        self.label = Label(self.content, text="Enter server's IP")
         self.fields = [Button(self.content, text="", width=8, height=4) for i in range(9)]
         self.entry_text = StringVar(self.root, value="127.0.0.1")
         self.entry = Entry(self.root, textvariable=self.entry_text)
-        self.entry_button = Button(self.root, text="Polacz", command=lambda: self.b_cn())
+        self.entry_button = Button(self.root, text="Connect", command=lambda: self.b_cn())
         self.content.grid(column=0, row=0)
         self.label.grid(row=3, columnspan=3)
         self.entry.grid(row=4, column=0)
@@ -82,20 +82,20 @@ class ClientApp(object):
             while not ipv4(self.addr):
                 pass
             self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.label.config(text="Czekanie na polaczenie")
+            self.label.config(text="Waiting for connection")
             try:
                 self.serverSocket.connect((self.addr, 7777))
             except:
-                self.label.config(text="Blad polaczenia")
+                self.label.config(text="Connection error")
             else:
-                self.label.config(text="Polaczono")
+                self.label.config(text="Connected")
                 self.connection = True
         self.entry.configure(state=DISABLED)
         self.entry_button.configure(state=DISABLED)
         while True:
             self.board = [0, 0, 0, 0, 0, 0, 0, 0, 0]
             while 0 in self.board:
-                self.label.config(text="Ruch przeciwnika")
+                self.label.config(text="Enemy's turn")
                 for obj in self.fields:
                     obj.configure(state=DISABLED)
                 try:
@@ -103,7 +103,7 @@ class ClientApp(object):
                 except socket.error:
                     for obj in self.fields:
                         obj.configure(state=DISABLED)
-                    self.label.config(text="Utracono polaczenie")
+                    self.label.config(text="Connection lost")
                     while True:
                         pass
                 self.exmove = int(self.buf.decode('ascii'))
@@ -113,7 +113,7 @@ class ClientApp(object):
                 if win(self.board) != 0 or 0 not in self.board:
                     break
 
-                self.label.config(text="Twoj ruch")
+                self.label.config(text="Your turn")
                 for obj in self.fields:
                     obj.configure(state=NORMAL)
                 self.move = -1
@@ -127,7 +127,7 @@ class ClientApp(object):
                 except socket.error:
                     for obj in self.fields:
                         obj.configure(state=DISABLED)
-                    self.label.config(text="Utracono polaczenie")
+                    self.label.config(text="Connection lost")
                     while True:
                         pass
                 if win(self.board) != 0 or 0 not in self.board:
@@ -136,13 +136,13 @@ class ClientApp(object):
             for obj in self.fields:
                 obj.configure(state=DISABLED)
             if win(self.board) == 1:
-                self.label.config(text="Wygrales")
+                self.label.config(text="You won")
             elif win(self.board) == 0:
-                self.label.config(text="Remis")
+                self.label.config(text="Draw")
             elif win(self.board) == -1:
-                self.label.config(text="Przegrales")
+                self.label.config(text="You lost")
             time.sleep(1)
-            self.label.config(text="Restartowanie")
+            self.label.config(text="Restarting")
             time.sleep(1)
             for obj in self.fields:
                 obj.config(text="")
@@ -151,7 +151,7 @@ class ServerApp(object):
     def __init__(self, master):
         self.root = master
         self.root.resizable(False, False)
-        self.root.title("Serwer")
+        self.root.title("Server")
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.content = ttk.Frame(self.root)
         self.label = Label(self.content, text="...")
@@ -185,13 +185,13 @@ class ServerApp(object):
             socket.AF_INET, socket.SOCK_STREAM)
         self.serverSocket.bind(('', 7777))
         self.serverSocket.listen()
-        self.label.config(text="Czekanie na polaczenie")
+        self.label.config(text="Waiting for connection")
         self.clientSocket, self.addr = self.serverSocket.accept()
-        self.label.config(text="Polaczono z {}".format(str(self.addr)) + "\n")
+        self.label.config(text="Connected with {}".format(str(self.addr)) + "\n")
         while True:
             self.board = [0, 0, 0, 0, 0, 0, 0, 0, 0]
             while 0 in self.board:
-                self.label.config(text="Twoj ruch")
+                self.label.config(text="Your turn")
                 for obj in self.fields:
                     obj.configure(state=NORMAL)
                 self.move = -1
@@ -205,13 +205,13 @@ class ServerApp(object):
                 except socket.error:
                     for obj in self.fields:
                         obj.configure(state=DISABLED)
-                    self.label.config(text="Utracono polaczenie")
+                    self.label.config(text="Connection lost")
                     while True:
                         pass
                 if win(self.board) != 0 or 0 not in self.board:
                     break
 
-                self.label.config(text="Ruch przeciwnika")
+                self.label.config(text="Enemy's turn")
                 for obj in self.fields:
                     obj.configure(state=DISABLED)
                 try:
@@ -219,7 +219,7 @@ class ServerApp(object):
                 except socket.error:
                     for obj in self.fields:
                         obj.configure(state=DISABLED)
-                    self.label.config(text="Utracono polaczenie")
+                    self.label.config(text="Connection lost")
                     while True:
                         pass
                 self.exmove = int(self.buf.decode('ascii'))
@@ -231,13 +231,13 @@ class ServerApp(object):
             for obj in self.fields:
                 obj.configure(state=DISABLED)
             if win(self.board) == 1:
-                self.label.config(text="Wygrales")
+                self.label.config(text="You won")
             elif win(self.board) == 0:
-                self.label.config(text="Remis")
+                self.label.config(text="Draw")
             elif win(self.board) == -1:
-                self.label.config(text="Przegrales")
+                self.label.config(text="You lost")
             time.sleep(1)
-            self.label.config(text="Restartowanie")
+            self.label.config(text="Restarting")
             time.sleep(1)
             for obj in self.fields:
                 obj.config(text="")
@@ -249,9 +249,9 @@ class DialogApp(object):
         self.droot.title("ttt")
         self.droot.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.content = ttk.Frame(self.droot)
-        self.label = Label(self.content, text="Wybierz:")
-        self.b1 = Button(self.content, text="Klient", width=16, height=2, command=lambda: self.choose(0))
-        self.b2 = Button(self.content, text="Serwer", width=16, height=2, command=lambda: self.choose(1))
+        self.label = Label(self.content, text="Choose:")
+        self.b1 = Button(self.content, text="Client", width=16, height=2, command=lambda: self.choose(0))
+        self.b2 = Button(self.content, text="Server", width=16, height=2, command=lambda: self.choose(1))
         self.content.grid(column=0, row=0)
         self.label.grid(row=0, columnspan=2)
         self.b1.grid(column=0, row=1)
