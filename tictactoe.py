@@ -147,6 +147,7 @@ class ClientApp(object):
             for obj in self.fields:
                 obj.config(text="")
 
+
 class ServerApp(object):
     def __init__(self, master):
         self.root = master
@@ -242,6 +243,7 @@ class ServerApp(object):
             for obj in self.fields:
                 obj.config(text="")
 
+
 class DialogApp(object):
     def __init__(self, master):
         self.droot = master
@@ -274,6 +276,3 @@ class DialogApp(object):
 root = Tk()
 app = DialogApp(root)
 root.mainloop()
-
-while True:
-    pass
